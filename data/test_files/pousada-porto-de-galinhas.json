@@ -1,0 +1,188 @@
+{
+  "url": "https://www.booking.com/hotel/br/pousada-porto-de-galinhas.pt-br.html",
+  "id": "299562",
+  "title": "Pousada Porto De Galinhas",
+  "description": "Você se qualifica para um desconto Genius em Pousada Porto De Galinhas! Para economizar nesta acomodação, basta \nfazer o login\n.\n\nA Pousada Porto de Galinhas está localizada a 900m da entrada da vila e a 60km do aeroporto. A pousada oferece piscina e quartos com varanda.\n\nSuítes e apartamentos dispõem de uma decoração básica, com piso de azulejo. Eles estão equipados com televisão, acesso gratuito à internet sem-fio (Wi-Fi) e frigobar. Os apartamentos também dispõem de uma cozinha equipada com utensílios.\n\nVocê pode desfrutar de um buffet de café-da-manhã com frutas frescas, sucos, pães e bolos. Restaurantes e bares são encontrados no centro, com opções para jantar e entretenimento noturno.\n\nA recepção da Pousada Porto de Galinhas pode aconselhar sobre as atividades na área, tais como passeios de buggy, surf e mergulho.\nCasais particularmente gostam da localização — eles deram nota \n8,4\n para viagem a dois.\nA distância na descrição da acomodação é calculada pelo © OpenStreetMap",
+  "address": "Loteamento Merepe III, Quadra 8 C, Lotes 4 E 5, Porto de Galinhas, CEP 55590-000, Brasil",
+  "images": [],
+  "lat": "-8.49943660",
+  "lng": "-35.00758052",
+  "features": {
+    "Banheiro": [
+      "Papel higiênico",
+      "Toalhas",
+      "Banheiro privativo",
+      "Vaso sanitário",
+      "Produtos de higiene pessoal gratuitos",
+      "Chuveiro"
+    ],
+    "Quarto": [
+      "Roupa de cama",
+      "Guarda-roupa ou armário"
+    ],
+    "Área ao ar livre": [
+      "Jardim"
+    ],
+    "Comodidades do quarto": [
+      "Tomada perto da cama",
+      "Varal para secar roupas",
+      "Arara para roupas"
+    ],
+    "Atividades": [
+      "Parquinho infantil"
+    ],
+    "Área de estar": [
+      "Mesa de trabalho"
+    ],
+    "Mídia / Tecnologia": [
+      "TV de tela plana",
+      "TV"
+    ],
+    "Alimentos e bebidas": [
+      "Frigobar"
+    ],
+    "Internet": [],
+    "Estacionamento": [
+      "Estacionamento acessível"
+    ],
+    "Serviços": [
+      "Serviço de limpeza diário",
+      "Depósito de bagagens",
+      "Recepção 24 horas",
+      "Serviço de quarto"
+    ],
+    "Segurança": [
+      "Extintores de incêndio",
+      "Cofre"
+    ],
+    "Geral": [
+      "Ar-condicionado",
+      "Proibido fumar em todas as áreas",
+      "Piso de mármore/azulejo",
+      "Cofre para notebook",
+      "Quartos para famílias",
+      "Quartos para não fumantes"
+    ],
+    "Acessibilidade": [
+      "Andares superiores acessíveis somente por escada"
+    ],
+    "Piscina ao ar livre": [
+      "Aberta o ano todo"
+    ],
+    "Idiomas falados": [
+      "Inglês",
+      "Espanhol",
+      "Português"
+    ]
+  },
+  "rooms":[
+      {
+          "name":"Quarto Duplo",
+          "size":"20 metros quadrados",
+          "beds":"1 cama de casal",
+          "max_people":"Comporta até duas pessoas",
+          "description":"Oferecendo amenidades de banho gratuitas, este quarto duplo inclui banheiro privativo com chuveiro. O quarto duplo dispõe de ar-condicionado, TV de tela plana, frigobar, guarda-roupa, cofre e vista para o pátio interno.",
+          "features":{
+              "Banheiro":[
+                  "Produtos de higiene pessoal gratuitos",
+                  "Vaso sanitário",
+                  "Chuveiro",
+                  "Papel higiênico"
+              ],
+              "Vista":[
+                  "Vista do pátio interno"
+              ],
+              "Comodidades":[
+                  "Cofre para notebook",
+                  "Mesa de trabalho",
+                  "TV",
+                  "Roupa de cama",
+                  "Frigobar",
+                  "Cofre",
+                  "Piso de mármore/azulejo",
+                  "Andares superiores acessíveis somente por escada",
+                  "TV de tela plana",
+                  "Varal para secar roupas",
+                  "Toalhas",
+                  "Guarda-roupa ou armário",
+                  "Tomada perto da cama",
+                  "Ar-condicionado",
+                  "Arara para roupas"
+              ],
+              "Observações":["Não é permitido fumar"]
+          }
+      },
+      {
+          "name":"Quarto Triplo",
+          "size":"20 metros quadrados",
+          "beds":"1 cama de solteiro e 1 cama de casal",
+          "max_people":"Comporta até três pessoas",
+          "description":"Com produtos de higiene pessoal gratuitos, este quarto triplo inclui uma casa de banho privativa com chuveiro. O quarto triplo dispõe de ar-condicionado, TV de tela plana, frigobar, guarda-roupa, cofre e vista para o pátio interno. A unidade possui 2 camas.",
+          "features":{
+              "Banheiro":[
+                  "Produtos de higiene pessoal gratuitos",
+                  "Vaso sanitário",
+                  "Chuveiro",
+                  "Papel higiênico"
+              ],
+              "Vista":[
+                  "Vista do pátio interno"
+              ],
+              "Comodidades":[
+                  "Cofre para notebook",
+                  "Mesa de trabalho",
+                  "TV",
+                  "Roupa de cama",
+                  "Frigobar",
+                  "Cofre",
+                  "Piso de mármore/azulejo",
+                  "Andares superiores acessíveis somente por escada",
+                  "TV de tela plana",
+                  "Varal para secar roupas",
+                  "Toalhas",
+                  "Guarda-roupa ou armário",
+                  "Tomada perto da cama",
+                  "Ar-condicionado",
+                  "Arara para roupas"
+              ],
+              "Observações":["Não é permitido fumar"]
+          }
+      },
+      {
+          "name":"Quarto Quádruplo",
+          "size":"20 metros quadrados",
+          "beds":"2 camas de solteiro e 1 cama de casal",
+          "max_people":"Comporta até quatro pessoas",
+          "description":"Com produtos de higiene pessoal gratuitos, este quarto triplo inclui uma casa de banho privativa com chuveiro. O quarto triplo dispõe de ar-condicionado, TV de tela plana, frigobar, guarda-roupa, cofre e vista para o pátio interno. A unidade possui 3 camas.",
+          "features":{
+              "Banheiro":[
+                  "Produtos de higiene pessoal gratuitos",
+                  "Vaso sanitário",
+                  "Chuveiro",
+                  "Papel higiênico"
+              ],
+              "Vista":[
+                  "Vista do pátio interno"
+              ],
+              "Comodidades":[
+                  "Cofre para notebook",
+                  "Mesa de trabalho",
+                  "TV",
+                  "Roupa de cama",
+                  "Frigobar",
+                  "Cofre",
+                  "Piso de mármore/azulejo",
+                  "Andares superiores acessíveis somente por escada",
+                  "TV de tela plana",
+                  "Varal para secar roupas",
+                  "Toalhas",
+                  "Guarda-roupa ou armário",
+                  "Tomada perto da cama",
+                  "Ar-condicionado",
+                  "Arara para roupas"
+              ],
+              "Observações":["Não é permitido fumar"]
+          }
+      }
+  ]
+}
