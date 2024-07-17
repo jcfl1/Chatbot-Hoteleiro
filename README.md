@@ -1,9 +1,7 @@
 # Chatbot-Hoteleiro
 
-Algumas libs necessárias:
+Instalando libs necessárias:
 
 ```
-pip install python-telegram-bot --upgrade
-pip install python-dotenv
-pip install openai
+python3 -m pip install -r requirements.txt
 ```

@@ -1,41 +1,44 @@
-#!/usr/bin/env python
-# pylint: disable=unused-argument
-# This program is dedicated to the public domain under the CC0 license.
+"""Define the functions used by Telegram."""
 
-"""
-Simple Bot to reply to Telegram messages.
-
-First, a few handler functions are defined. Then, those functions are passed to
-the Application and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-
-Usage:
-Basic Echobot example, repeats messages.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
-
-import logging
 import os
 from dotenv import load_dotenv
 from telegram import ForceReply, Update
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import ContextTypes
 from rag import RAGApplication
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+load_dotenv(".env")
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+VECTOR_STORE_ID = os.getenv('VECTOR_STORE_ID')
+ASSISTANT_ID = os.getenv('ASSISTANT_ID')
+
+rag_application = RAGApplication(OPENAI_API_KEY, ASSISTANT_ID, VECTOR_STORE_ID)
+
+async def start(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
+) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
     await update.message.reply_html(
-        rf"Oi {user.mention_html()}!",
+        rf"Oi {user.mention_html()}! Como posso ajudar?",
         reply_markup=ForceReply(selective=True),
     )
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_command(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
+) -> None:
     """Send a message when the command /help is issued."""
-    await update.message.reply_text(f"""Você pode perguntar qualquer coisa sobre Hotelaria em Porto de Galinhas que eu saberei responder 😁.""")
+    await update.message.reply_text(
+        "Você pode perguntar sobre Hoteis em Porto de Galinhas que eu saberei responder 😁."
+    )
 
-async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Echo the user message."""
-    await update.message.reply_text(update.message.text)
-
+async def get_bot_answer(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
+) -> None:
+    """Answers the general user message."""
+    rag_application.add_user_message(update.message.text)
+    bot_message = str(rag_application.run_thread()["messages"][0])
+    await update.message.reply_text(bot_message)
