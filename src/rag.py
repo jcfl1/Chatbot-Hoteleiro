@@ -11,9 +11,9 @@ class RAGAssistant:
     
 Params:
     openai_api_key (str): openai api key
-    assistant_id (str): openai assistant id
-    vector_store_id (str): vector store id
-    assistant_prompt (str): assistant system level prompt
+    hotel_name (str): hotel name
+    prompt (str): prompt
+    model (str): model
 """
     def __init__(self, openai_api_key: str, 
                 hotel_name: str, 

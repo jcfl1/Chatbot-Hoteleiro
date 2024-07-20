@@ -8,6 +8,14 @@ from rag import RAGAssistant
 
 
 class TelegramChatbot:
+    """Iniciates Telegram Chatbot
+Params:
+    telegram_token (str): telegram token
+    openai_api_key (str): openai api key
+    hotel_name (str): hotel name
+    prompt (str): prompt
+    model (str): model
+"""
     def __init__(self, 
                 telegram_token: str, 
                 openai_api_key: str,
