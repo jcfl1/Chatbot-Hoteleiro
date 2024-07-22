@@ -1,0 +1,172 @@
+{
+  "url": "https://www.booking.com/hotel/br/pousada-porto-de-galinhas.html?label=gen173nr-1BCAsoIEIZcG91c2FkYS1wb3J0by1kZS1nYWxpbmhhc0gtWARosAKIAQGYATG4ARjIAQzYAQHoAQGIAgGoAgS4Ap23-bQGwAIB0gIkNDZjMDRmMmItNTM2MC00YTg1LWEzZGUtM2QzNjU3NDYwZDMz2AIF4AIB&sid=a3f720d6de5bb7e73c04ce4cd6796292&dist=0&keep_landing=1&sb_price_type=total&type=total&",
+  "id": "299562",
+  "title": "Pousada Porto De Galinhas",
+  "description": "",
+  "address": "Loteamento Merepe III, Quadra 8 C, Lotes 4 E 5, Porto De Galinhas, CEP 55590-000, Brazil",
+  "images": [
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/112477544.jpg?k=e5ce21f41d3b6d20d430d16bba355bfa500382c2a84dd1681b03549a5180263f&o=&hp=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max500/68005338.jpg?k=c7f214ff82c2929edd2b93060c8f0ae4b89ba332f4e49b65b349cbacabe35eae&o=&hp=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max500/113855302.jpg?k=bde90b30b6e771be943117e6dcbcdd54de1f36d8a7d5eb5696b8434fa67c1b4d&o=&hp=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max300/168007065.jpg?k=68fa35ee3bb1e6980b3b473b7be1bb75f77cee8c2b843a88f878ea749eb0b3b1&o=&hp=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max300/68005451.jpg?k=4ebb270c9f7365992888eb765f8fafc63fb0445d547b9ba0e33f41c672b20f00&o=&hp=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max300/113855282.jpg?k=165e2629ca7793fae43642e9d8a25680809c06a729151fd1402a2ea09a3ea395&o=&hp=1",
+    "https://cf.bstatic.com/xdata/images/hotel/max300/112509325.jpg?k=8ad469575e568ddf9ad3b206f0708539455d8bffb3d3bb739b4c20bc516dbd29&o=&hp=1"
+  ],
+  "lat": "-8.49943660",
+  "lng": "-35.00758052",
+  "features": {
+    "Bathroom": [
+      "Toilet paper",
+      "Towels",
+      "Private Bathroom",
+      "Toilet",
+      "Free toiletries",
+      "Shower"
+    ],
+    "Bedroom": [
+      "Linens",
+      "Wardrobe or closet"
+    ],
+    "Outdoors": [
+      "Garden"
+    ],
+    "Room Amenities": [
+      "Socket near the bed",
+      "Drying rack for clothing",
+      "Clothes rack"
+    ],
+    "Activities": [
+      "Playground"
+    ],
+    "Living Area": [
+      "Desk"
+    ],
+    "Media & Technology": [
+      "Flat-screen TV",
+      "TV"
+    ],
+    "Food & Drink": [
+      "Minibar"
+    ],
+    "Internet": [],
+    "Parking": [
+      "Accessible parking"
+    ],
+    "Services": [
+      "Daily housekeeping",
+      "Baggage storage",
+      "24-hour front desk",
+      "Room service"
+    ],
+    "Safety & security": [
+      "Fire extinguishers",
+      "Safe"
+    ],
+    "General": [
+      "Air conditioning",
+      "Smoke-free property",
+      "Tile/Marble floor",
+      "Laptop safe",
+      "Family rooms",
+      "Non-smoking rooms"
+    ],
+    "Accessibility": [
+      "Upper floors accessible by stairs only"
+    ],
+    "Outdoor swimming pool": [
+      "Open all year"
+    ],
+    "Languages Spoken": [
+      "English",
+      "Spanish",
+      "Portuguese"
+    ]
+  },
+  "rooms": {
+    "Suite with Lake View": {
+      "max_people": "2 adults",
+      "beds": [
+        "1 full bed"
+      ]
+    },
+    "Apartment with Lake View": {
+      "max_people": "2 adults",
+      "beds": [
+        "1 full bed"
+      ]
+    },
+    "Quadruple Room": {
+      "max_people": "4 adults",
+      "beds": [
+        "2 twin beds",
+        "1 full bed"
+      ]
+    },
+    "Triple Room": {
+      "max_people": "3 adults",
+      "beds": [
+        "1 twin bed",
+        "1 full bed"
+      ]
+    },
+    "Double Room": {
+      "max_people": "2 adults",
+      "beds": [
+        "1 full bed",
+        "2 twin beds"
+      ]
+    }
+  },
+  "price": [
+    {
+      "available": true,
+      "minLengthOfStay": 2,
+      "checkin": "2024-07-29",
+      "avgPriceFormatted": "$38",
+      "__typename": "AvailabilityCalendarDay"
+    },
+    {
+      "__typename": "AvailabilityCalendarDay",
+      "checkin": "2024-07-31",
+      "minLengthOfStay": 2,
+      "avgPriceFormatted": "$38",
+      "available": true
+    },
+    {
+      "__typename": "AvailabilityCalendarDay",
+      "available": true,
+      "minLengthOfStay": 2,
+      "checkin": "2024-07-30",
+      "avgPriceFormatted": "$38"
+    },
+    {
+      "__typename": "AvailabilityCalendarDay",
+      "checkin": "2024-08-04",
+      "minLengthOfStay": 2,
+      "available": true,
+      "avgPriceFormatted": "$38"
+    },
+    {
+      "available": true,
+      "minLengthOfStay": 2,
+      "checkin": "2024-08-01",
+      "avgPriceFormatted": "$38",
+      "__typename": "AvailabilityCalendarDay"
+    },
+    {
+      "__typename": "AvailabilityCalendarDay",
+      "minLengthOfStay": 2,
+      "checkin": "2024-08-02",
+      "available": true,
+      "avgPriceFormatted": "$38"
+    },
+    {
+      "available": true,
+      "minLengthOfStay": 2,
+      "checkin": "2024-08-03",
+      "avgPriceFormatted": "$38",
+      "__typename": "AvailabilityCalendarDay"
+    }
+  ]
+}
