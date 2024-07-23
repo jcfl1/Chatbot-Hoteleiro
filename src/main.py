@@ -17,6 +17,7 @@ Mantenha um tom formal e educado. Responda à pergunta do usuário da forma mais
 sem informações desnecessárias. Se não souber a resposta, diga que não tem a informação e \
 ofereça ajuda para encontrar a solução. Dê boas vindas ao cliente na sua primeira mensagem."
 """
+DEFAULT_HOTEL_NAME = 'Pousada Porto de Galinhas'
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -27,9 +28,6 @@ logger = logging.getLogger(__name__)
 def create_parser():
     """salvando argumentos"""
     parser = argparse.ArgumentParser(description="Provide arguments for Chatbot Hoteleiro")
-    
-    # Adicionando argumentos
-    parser.add_argument('--hotel_name', default='Pousada Porto de Galinhas', type=str, help='Hotel name')
     parser.add_argument('--model', default='gpt-3.5-turbo', type=str, help='Model')
     
     return parser
@@ -42,7 +40,7 @@ def main() -> None:
     telegram_chatbot = TelegramChatbot(
         TELEGRAM_TOKEN,
         OPENAI_API_KEY,
-        args.hotel_name,
+        DEFAULT_HOTEL_NAME,
         DEFAULT_ASSISTANT_PROMPT,
         args.model
     )

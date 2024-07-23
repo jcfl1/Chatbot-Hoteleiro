@@ -15,7 +15,8 @@ from typing import Dict, List, Optional, TypedDict
 from urllib.parse import urlencode
 from uuid import uuid4
 
-from loguru import logger as log
+# from loguru import logger as log
+from datetime import datetime, timedelta
 from scrapfly import ScrapeApiResponse, ScrapeConfig, ScrapflyClient
 
 SCRAPFLY = ScrapflyClient(key="scp-live-9f23777855724dec804e73230baffc63")
@@ -126,7 +127,7 @@ async def scrape_search(
     max_pages: Optional[int] = None,
 ) -> List[Dict]:
     """Scrape booking.com search"""
-    log.info(f"scraping search for {query} {checkin}-{checkout}")
+    #log.info(f"scraping search for {query} {checkin}-{checkout}")
     # first we must find destination details from provided query
     # for that scrape suggestions from booking.com autocomplete and take the first one
     location_suggestions = await search_location_suggestions(query)
@@ -165,10 +166,10 @@ async def scrape_search(
         generate_graphql_request(url_params, body, offset)
         for offset in range(0, _total_results, 25)
     ]
-    log.info(f"scraping search results from the graphql api: {len(to_scrape)} pages to request")
+    #log.info(f"scraping search results from the graphql api: {len(to_scrape)} pages to request")
     async for response in SCRAPFLY.concurrent_scrape(to_scrape):
         data.extend(parse_graphql_response(response))
-    log.success(f"scraped {len(data)} results from search pages")
+    #log.success(f"scraped {len(data)} results from search pages")
     return data
        
 
@@ -197,7 +198,7 @@ class Hotel(TypedDict):
 
 
 def parse_hotel(result: ScrapeApiResponse) -> Hotel:
-    log.debug("parsing hotel page: {}", result.context["url"])
+    #log.debug("parsing hotel page: {}", result.context["url"])
     sel = result.selector
 
     features = defaultdict(list)
@@ -245,7 +246,7 @@ async def scrape_hotel(url: str, checkin: str, price_n_days=61) -> Hotel:
     #       have to be from the same IP address/session
     if BASE_CONFIG.get("cache"):
         raise Exception("scrapfly cache cannot be used with sessions when scraping hotel data")
-    log.info(f"scraping hotel {url} {checkin} with {price_n_days} days of pricing data")
+    #log.info(f"scraping hotel {url} {checkin} with {price_n_days} days of pricing data")
     session = str(uuid4()).replace("-", "")
     result = await SCRAPFLY.async_scrape(
         ScrapeConfig(

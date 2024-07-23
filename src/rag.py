@@ -1,10 +1,43 @@
 """Define the class that collects the bot's response using the OpenAI model."""
 
+import os
+import tempfile
+from pathlib import Path
 from openai import OpenAI
 import json
 import secrets
 
 BASE_PROMPT = 'Você é um atendente da rede hoteleira do estabelecimento de nome "{}"\n\n'
+
+def create_vector_store(booking_hotel_dict, openai_api_key):
+    path_hotels2vector_stores = os.path.join('..', 'data', 'hotels2vector_stores.json')
+    hotels2vector_stores = json.load(open(path_hotels2vector_stores, 'rt'))
+
+    hotel_name = booking_hotel_dict['title']
+
+    if hotel_name in hotels2vector_stores:
+        print(f'[INFO] The hotel {hotel_name} is already in hotels2vector_stores.json. Skipping it.')
+        return
+    
+    output_dir = Path(os.path.join('..', 'data', 'tmp'))
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / f"booking_hotel_data_{hotel_name}.json"
+    output_file.write_text(json.dumps(booking_hotel_dict, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    client = OpenAI(api_key=openai_api_key)
+    vector_store = client.beta.vector_stores.create(name=f'Booking Data "{hotel_name}"')
+    file_upload = client.beta.vector_stores.files.upload_and_poll(
+        vector_store_id=vector_store.id, file=output_file
+    )
+    print(f'File upload status: {file_upload.status}')
+
+    # Updating hotels2vector_stores.json
+    hotels2vector_stores[hotel_name] = vector_store.id
+    with open(path_hotels2vector_stores, 'wt') as f:
+        json.dump(hotels2vector_stores, f, indent=2)
+
+    return vector_store.id
+
 
 class RAGAssistant:
     """Iniciates RAG Assistant
