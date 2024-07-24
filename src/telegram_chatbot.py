@@ -143,7 +143,6 @@ Params:
 
         rag_assistant.add_user_message(update.message.text)
         bot_message = str(rag_assistant.run_thread()["messages"][0])
-        
         # Removing retrieval references
         bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
         await update.message.reply_text(bot_message_cleaned)
