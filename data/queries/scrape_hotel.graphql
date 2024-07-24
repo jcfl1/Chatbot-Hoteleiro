@@ -1,0 +1,20 @@
+query AvailabilityCalendar($input: AvailabilityCalendarQueryInput!) {
+  availabilityCalendar(input: $input) {
+    ... on AvailabilityCalendarQueryResult {
+      hotelId
+      days {
+        available
+        avgPriceFormatted
+        checkin
+        minLengthOfStay
+        __typename
+      }
+      __typename
+    }
+    ... on AvailabilityCalendarQueryError {
+      message
+      __typename
+    }
+    __typename
+  }
+}
