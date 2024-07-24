@@ -2,6 +2,7 @@
 
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
+import re
 from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
@@ -142,4 +143,7 @@ Params:
 
         rag_assistant.add_user_message(update.message.text)
         bot_message = str(rag_assistant.run_thread()["messages"][0])
-        await update.message.reply_text(bot_message)
+        
+        # Removing retrieval references
+        bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
+        await update.message.reply_text(bot_message_cleaned)
