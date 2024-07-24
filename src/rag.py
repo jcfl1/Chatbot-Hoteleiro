@@ -1,28 +1,45 @@
 """Define the class that collects the bot's response using the OpenAI model."""
 
 import os
-import tempfile
-from pathlib import Path
-from openai import OpenAI
 import json
 import secrets
+from dataclasses import dataclass
+from pathlib import Path
+from openai import OpenAI
 
 BASE_PROMPT = 'Você é um atendente da rede hoteleira do estabelecimento de nome "{}"\n\n'
+VECTOR_STORE_PATH = os.path.join('data', 'hotels2vector_stores.json')
 
-def create_vector_store(booking_hotel_dict, openai_api_key):
-    path_hotels2vector_stores = os.path.join('..', 'data', 'hotels2vector_stores.json')
-    hotels2vector_stores = json.load(open(path_hotels2vector_stores, 'rt'))
+
+def create_vector_store(booking_hotel_dict: dict, openai_api_key: str) -> str:
+    """Creates vector store for scraped hotel.
+
+    Args:
+        booking_hotel_dict (dict): scraped dict
+        openai_api_key (str): api key
+
+    Returns:
+        str: vector store id
+    """
+
+    with open(VECTOR_STORE_PATH, 'rt', encoding="utf-8") as f:
+        hotels2vector_stores = json.load(f)
 
     hotel_name = booking_hotel_dict['title']
 
     if hotel_name in hotels2vector_stores:
-        print(f'[INFO] The hotel {hotel_name} is already in hotels2vector_stores.json. Skipping it.')
-        return
-    
+        print(
+            f'[INFO] The hotel {hotel_name} is already in hotels2vector_stores.json. Skipping it.'
+        )
+        return hotels2vector_stores[hotel_name]
+
     output_dir = Path(os.path.join('..', 'data', 'tmp'))
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = output_dir / f"booking_hotel_data_{hotel_name}.json"
-    output_file.write_text(json.dumps(booking_hotel_dict, indent=2, ensure_ascii=False), encoding="utf-8")
+    output_file.write_text(
+        json.dumps(booking_hotel_dict, indent=2, ensure_ascii=False),
+        encoding="utf-8"
+    )
 
     client = OpenAI(api_key=openai_api_key)
     vector_store = client.beta.vector_stores.create(name=f'Booking Data "{hotel_name}"')
@@ -33,36 +50,47 @@ def create_vector_store(booking_hotel_dict, openai_api_key):
 
     # Updating hotels2vector_stores.json
     hotels2vector_stores[hotel_name] = vector_store.id
-    with open(path_hotels2vector_stores, 'wt') as f:
+    with open(VECTOR_STORE_PATH, 'wt', encoding="utf-8") as f:
         json.dump(hotels2vector_stores, f, indent=2)
 
     return vector_store.id
+
+@dataclass
+class RAGParams():
+    """Object to store the necessary params for RAG assistant. 
+       
+    Params:
+        openai_api_key (str): openai api key
+        hotel_name (str): hotel name
+        prompt (str): prompt
+        model (str): model
+"""
+    openai_api_key: str
+    hotel_name: str
+    prompt: str
+    model: str
 
 
 class RAGAssistant:
     """Iniciates RAG Assistant
     
 Params:
-    openai_api_key (str): openai api key
-    hotel_name (str): hotel name
-    prompt (str): prompt
-    model (str): model
+    rag_params (RAGParams): Parameters for the assistant
 """
-    def __init__(self, openai_api_key: str, 
-                hotel_name: str, 
-                prompt: str, 
-                model: str) -> None:
-        self.hotel_name = hotel_name
-        hotels2vector_stores = json.load(open('../data/hotels2vector_stores.json', 'rt'))
-        if hotel_name not in hotels2vector_stores:
-            raise ValueError(f'Please first create a vector store for hotel {hotel_name} before create an assistant to this hotel.')
-        self.vector_store_id = hotels2vector_stores[hotel_name]
+    def __init__(self, rag_params: RAGParams) -> None:
 
-        self.client = OpenAI(api_key=openai_api_key)
+        with open(VECTOR_STORE_PATH, 'rt', encoding="utf-8") as f:
+            hotels2vector_stores = json.load(f)
+
+        if rag_params.hotel_name not in hotels2vector_stores:
+            raise ValueError(f'Please first create a vector store for hotel {rag_params.hotel_name} before creating an assistant to it.') # pylint: disable=line-too-long
+        self.vector_store_id = hotels2vector_stores[rag_params.hotel_name]
+
+        self.client = OpenAI(api_key=rag_params.openai_api_key)
         self.assistant = self.client.beta.assistants.create(
-            name = f"{hotel_name} Assistant {secrets.token_hex(4)}",
-            instructions = BASE_PROMPT.format(hotel_name) + prompt,
-            model = model,
+            name = f"{rag_params.hotel_name} Assistant {secrets.token_hex(4)}",
+            instructions = BASE_PROMPT.format(rag_params.hotel_name) + rag_params.prompt,
+            model = rag_params.model,
             tools = [{"type": "file_search"}],
             tool_resources = {"file_search": {"vector_store_ids": [self.vector_store_id]}}
         )
