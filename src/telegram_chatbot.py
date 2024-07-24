@@ -53,7 +53,7 @@ Params:
         self
     ) -> None:
         """Runs telegram chatbot"""
-        self.telegram_app.run_polling(allowed_updates=Update.ALL_TYPES)
+        self.telegram_app.run_polling(poll_interval=2,allowed_updates=Update.ALL_TYPES)
 
     async def start(
         self,
