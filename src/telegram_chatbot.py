@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from datetime import datetime, timedelta
 import re
 from telegram import Update
+from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bookingcom import scrape_hotel
@@ -133,6 +134,7 @@ Params:
     ) -> None:
         """Answers the general user message."""
         chat_id = update.message.chat_id
+        await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
         if chat_id not in self.chat_ids2assistants:
             # Cria um contexto fake para chamar o método start
