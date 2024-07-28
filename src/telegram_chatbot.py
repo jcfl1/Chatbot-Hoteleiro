@@ -2,13 +2,14 @@
 
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
-import re
+import re, time
 from telegram import Update
+from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bookingcom import scrape_hotel
 from rag import RAGAssistant, create_vector_store, RAGParams
-
+from prompts import prompt_persona1, prompt_persona2,  prompt_persona3
 
 def is_valid_url(url: str) -> bool:
     """
@@ -39,9 +40,12 @@ Params:
 
         self.telegram_app = Application.builder().token(telegram_token).build()
 
-        self.telegram_app.add_handler(CommandHandler("start", self.start))
+        self.telegram_app.add_handler(CommandHandler("start", self.start_command))
         self.telegram_app.add_handler(CommandHandler("help", self.help_command))
         self.telegram_app.add_handler(CommandHandler("hotel", self.hotel_command))
+        self.telegram_app.add_handler(CommandHandler("Marcos", self.persona1_command))
+        self.telegram_app.add_handler(CommandHandler("Ana", self.persona2_command))
+        self.telegram_app.add_handler(CommandHandler("Lucas", self.persona3_command))
 
         self.telegram_app.add_handler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, self.get_bot_answer)
@@ -56,22 +60,27 @@ Params:
         """Runs telegram chatbot"""
         self.telegram_app.run_polling(poll_interval=2,allowed_updates=Update.ALL_TYPES)
 
-    async def start(
+    async def start_command(
         self,
         update: Update,
         context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
     ) -> None:
         """Send a message when the command /start is issued."""
-
-        chat_id = update.message.chat_id
-        if chat_id not in self.chat_ids2assistants:
-            self.chat_ids2assistants[chat_id] = RAGAssistant(
-                self.rag_params
-            )
-
+        await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
         await update.message.reply_text(
-            f"Olá, bem-vindo! Você pode perguntar sobre o estabelecimento {self.rag_params.hotel_name} que eu saberei responder 😁." # pylint: disable=line-too-long
+            f"""
+            Seja bem-vindo(a) ao {self.rag_params.hotel_name}! 👋\n \n"""
+            """Sou o assistente virtual do hotel e estou aqui para te ajudar no que precisar. Para que eu possa te atender melhor, escolha um dos nossos especialistas: \n \n"""
+            """Para começar, digite:\n"""
+            """- /Marcos: Respostas precisas e objetivas para suas perguntas sobre o hotel. 🤖\n \n"""
+            """- /Ana: Uma verdadeira historiadora, te conta tudo sobre a cultura e história dos pontos turisticos da região. 🏛️\n \n"""
+            """- /Lucas: Uma especialista em gastronomia, te dá dicas dos melhores restaurantes e pratos da região. 🍽️\n \n"""
+            """Escolha seu assistente e começe a explorar! 😊"""
         )
+        await update.message.reply_text(
+            """Caso deseje assistência com outros hoteis, digite:\n"""
+            """/hotel <URL DO HOTEL NO BOOKING.COM>"""
+            )
 
     async def help_command(
         self,
@@ -83,6 +92,97 @@ Params:
             f"Você pode perguntar sobre o estabelecimento {self.rag_params.hotel_name} que eu saberei responder 😁." # pylint: disable=line-too-long
         )
 
+    async def persona1_command(
+        self,
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
+    ) -> None:
+        await self.handle_assistant("persona1",prompt_persona1, update, context)
+        await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+        await update.message.reply_text(
+            f"Olá! Sou Marcos, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
+        )
+
+    async def persona2_command(
+        self,
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
+        await self.handle_assistant("persona2", prompt_persona1,update, context) 
+        await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+        await update.message.reply_text(
+        f"Olá! Sou Ana, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
+    )
+    async def persona3_command(
+            self,
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE
+    ) -> None:
+        await self.handle_assistant("persona3", prompt_persona1,update, context) 
+        await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+        await update.message.reply_text(
+        f"Olá! Sou Rogério, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
+    )
+
+    async def handle_assistant (
+        self,
+        persona,
+        prompt,
+        update: Update,
+        context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
+    ) -> None:
+
+        chat_id = update.message.chat_id
+        if chat_id not in self.chat_ids2assistants:
+            if persona == "persona1":
+                self.rag_params.tools = [{'type':'file_search'}]
+                self.rag_params.prompt = prompt_persona1
+                self.chat_ids2assistants[chat_id] = RAGAssistant(
+                self.rag_params
+            )
+            elif  persona == 'persona2':
+                self.rag_params.tools = [{
+                    'type':'file_search'
+                        }, {
+                            "type": "function",
+                            "function": {
+                                "name": "get_tourist_points",
+                                "description": "Esta função recebe um endereço e retorna os pontos turisticos proximos, junto com informações sobre a cultura e historia da região .",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "query": {"type": "string", "description": "The search query to use. For example: 'pontos turisticos proximos a pousada porto de galinhas'"},
+                                    },
+                                    "required": ["query"]
+                                }
+                            }
+                        }]
+                self.rag_params.prompt = prompt_persona2
+                self.chat_ids2assistants[chat_id] = RAGAssistant(
+                    self.rag_params
+            )
+            else:
+                self.rag_params.tools = [{'type':'file_search'},
+                        {
+                        "type": "function",
+                        "function": {
+                            "name": "get_restaurants",
+                            "description": "Esta função recebe um endereço proximo e retorna os restaurantes e bares próximos.",
+                            "parameters": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {"type": "string", "description": "The search query to use. For example: 'bares e restaurantes proximos a pousada porto de galinhas'"},
+                                },
+                                "required": ["query"]
+                            }
+                        }
+                    }]
+                self.rag_params.prompt = prompt_persona3
+                self.chat_ids2assistants[chat_id] = RAGAssistant(
+                    self.rag_params
+            )
+
+
     async def hotel_command(
         self,
         update: Update,
@@ -90,7 +190,6 @@ Params:
     ) -> None:
         """Handle the /hotel command to create a new assistant for a specific hotel URL."""
         chat_id = update.message.chat_id
-        # user = update.effective_user
         message_text = update.message.text
 
         # Extract the URL from the command message
@@ -133,16 +232,19 @@ Params:
     ) -> None:
         """Answers the general user message."""
         chat_id = update.message.chat_id
-
+    
         if chat_id not in self.chat_ids2assistants:
-            # Cria um contexto fake para chamar o método start
-            context.user_data['force_start'] = True
-            await self.start(update, context)
-
-        rag_assistant = self.chat_ids2assistants[chat_id]
-
-        rag_assistant.add_user_message(update.message.text)
-        bot_message = str(rag_assistant.run_thread()["messages"][0])
-        # Removing retrieval references
-        bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
-        await update.message.reply_text(bot_message_cleaned)
+            await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+            await update.message.reply_text("Por Favor, antes de começar, selecione seu assistente.")
+        else:
+             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+             """Answers the general user message."""
+             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+             rag_assistant = self.chat_ids2assistants[chat_id]
+           
+             rag_assistant.add_user_message(update.message.text)
+             bot_message = str(rag_assistant.run_thread()["messages"][0])
+            # Removing retrieval references
+             bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
+             
+             await update.message.reply_text(bot_message_cleaned)
