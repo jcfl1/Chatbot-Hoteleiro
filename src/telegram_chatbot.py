@@ -2,14 +2,19 @@
 
 from urllib.parse import urlparse
 from datetime import datetime, timedelta
+import requests
+import os
+import tempfile
 import re, time
-from telegram import Update
+import openai
+from telegram import Update, Message
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bookingcom import scrape_hotel
 from rag import RAGAssistant, create_vector_store, RAGParams
 from prompts import prompt_persona1, prompt_persona2,  prompt_persona3
+from pydub import AudioSegment
 
 def is_valid_url(url: str) -> bool:
     """
@@ -37,6 +42,7 @@ Params:
                 rag_params: RAGParams
                 ) -> None:
         self.rag_params = rag_params
+        self.telegram_token = telegram_token
 
         self.telegram_app = Application.builder().token(telegram_token).build()
 
@@ -49,6 +55,10 @@ Params:
 
         self.telegram_app.add_handler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, self.get_bot_answer)
+        )
+
+        self.telegram_app.add_handler(
+            MessageHandler(filters.AUDIO | filters.VOICE, self.handle_audio)
         )
 
         self.chat_ids2assistants = {}
@@ -121,7 +131,7 @@ Params:
         await self.handle_assistant("persona3", prompt_persona1,update, context) 
         await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
         await update.message.reply_text(
-        f"Olá! Sou Rogério, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
+        f"Olá! Sou Lucas, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
     )
 
     async def handle_assistant (
@@ -237,14 +247,64 @@ Params:
             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
             await update.message.reply_text("Por Favor, antes de começar, selecione seu assistente.")
         else:
-             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+            #  await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
              """Answers the general user message."""
              await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
              rag_assistant = self.chat_ids2assistants[chat_id]
+
+             print('setei rag assistant')
            
              rag_assistant.add_user_message(update.message.text)
+             print('add')
+
              bot_message = str(rag_assistant.run_thread()["messages"][0])
+             print('rodei a thread')
+
             # Removing retrieval references
              bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
              
              await update.message.reply_text(bot_message_cleaned)
+
+    async def handle_audio(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        chat_id = update.message.chat_id
+        # audio_file = await update.message.voice.get_file() if update.message.voice else await update.message.audio.get_file()
+        # my_audio_file = tempfile.NamedTemporaryFile(delete=False, suffix='.oga')
+        # with open(my_audio_file.name, 'wb') as f:
+        #     f.write(audio_file)
+        file_id = update['message']['voice']['file_id']
+        file_path = requests.get(f'https://api.telegram.org/bot{self.telegram_token}/getFile?file_id={file_id}').json()['result']['file_path']
+        file_url = f'https://api.telegram.org/file/bot{self.telegram_token}/{file_path}'
+        audio_data = requests.get(file_url).content
+        temp_audio_file = tempfile.NamedTemporaryFile(delete=False, suffix='.oga')
+        with open(temp_audio_file.name, 'wb') as f:
+            f.write(audio_data)
+        audio_local_path = temp_audio_file.name
+
+        # file_path = await audio_file.download_to_drive()
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_audio_file:
+            AudioSegment.from_file(audio_local_path).export(temp_audio_file.name, format="mp3")
+            transcript = await self.transcrever_audio(temp_audio_file.name)
+        # os.remove(my_audio_file.name)
+
+        # o text não pode ser setado diretamente, então é necessário criar uma nova mensagem
+        message = Message(
+            message_id=update.message.message_id,
+            date=update.message.date,
+            chat=update.message.chat,
+            from_user=update.message.from_user,
+            text=transcript
+        )
+        message.set_bot(context.bot)
+        new_update = Update(
+            update_id=update.update_id,
+            message=message,
+        )
+        print(context)
+        # Em seguida, processa a transcrição como se fosse uma mensagem de texto normal
+        await self.get_bot_answer(new_update, context)
+
+    async def transcrever_audio(self, arquivo_audio):
+        with open(arquivo_audio, "rb") as audio_file:
+            transcript = openai.audio.transcriptions.create(model="whisper-1", file=audio_file, response_format="text")
+            print(transcript)
+            return transcript.__str__()
