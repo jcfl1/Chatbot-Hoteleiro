@@ -8,7 +8,7 @@ import tempfile
 import re, time
 import openai
 from telegram import Update, Message
-from telegram.constants import ChatAction
+from telegram.constants import ChatAction, ParseMode
 from telegram.ext import ContextTypes
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bookingcom import scrape_hotel
@@ -222,18 +222,18 @@ Params:
             await update.message.reply_text("Por Favor, antes de começar, selecione seu assistente.")
         else:
             #  await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-             """Answers the general user message."""
-             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
-             rag_assistant = self.chat_ids2assistants[chat_id]
+            """Answers the general user message."""
+            await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+            rag_assistant = self.chat_ids2assistants[chat_id]
 
-           
-             rag_assistant.add_user_message(update.message.text)
-             bot_message = str(rag_assistant.run_thread()["messages"][0])
+        
+            rag_assistant.add_user_message(update.message.text)
+            bot_message = str(rag_assistant.run_thread()["messages"][0])
 
             # Removing retrieval references
-             bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
-             
-             await update.message.reply_text(bot_message_cleaned)
+            bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
+            bot_message_markdown_format = bot_message_cleaned.replace('**', '*').replace('#', '')
+            await update.message.reply_text(bot_message_markdown_format, parse_mode=ParseMode.MARKDOWN)
 
     async def handle_audio(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.message.chat_id
