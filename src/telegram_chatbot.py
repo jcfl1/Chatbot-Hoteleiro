@@ -191,23 +191,28 @@ Params:
             )
             return
 
-        days_to_scrape_prices = 7
-        booking_hotel_dict = await scrape_hotel(
-            hotel_booking_url,
-            checkin=(
-                datetime.now() + timedelta(days=days_to_scrape_prices)
-            ).strftime('%Y-%m-%d'), # One week from now
-            price_n_days=days_to_scrape_prices,
-        )
-        create_vector_store(booking_hotel_dict, self.rag_params.openai_api_key)
-        self.rag_params.hotel_name = booking_hotel_dict['title']
+        await update.message.reply_text(f"Estamos obtendo os dados do estabelecimento fornecido. Por favor, aguarde alguns segundos... 😊")
+        try:
+            days_to_scrape_prices = 7
+            booking_hotel_dict = await scrape_hotel(
+                hotel_booking_url,
+                checkin=(
+                    datetime.now() + timedelta(days=days_to_scrape_prices)
+                ).strftime('%Y-%m-%d'), # One week from now
+                price_n_days=days_to_scrape_prices,
+            )
+            create_vector_store(booking_hotel_dict, self.rag_params.openai_api_key)
+            self.rag_params.hotel_name = booking_hotel_dict['title']
 
-        # Create a new assistant associated with the provided URL
-        context.user_data['force_start'] = True
-        await self.start_command(update, context)
-        self.chat_ids2assistants[chat_id] = RAGAssistant(
-            self.rag_params
-        )
+            # Create a new assistant associated with the provided URL
+            context.user_data['force_start'] = True
+            await self.start_command(update, context)
+            self.chat_ids2assistants[chat_id] = RAGAssistant(
+                self.rag_params
+            )
+        except:
+            await update.message.reply_text(f"Ocorreu um erro! Tente novamente :(")
+
 
     async def get_bot_answer(
         self,
@@ -220,10 +225,13 @@ Params:
         if chat_id not in self.chat_ids2assistants:
             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
             await update.message.reply_text("Por Favor, antes de começar, selecione seu assistente.")
+            context.user_data['force_start'] = True
+            await self.start_command(update, context)
         else:
             #  await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
             """Answers the general user message."""
             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+            print('Recebi uma mensagem e avisei que estou digitando!')
             rag_assistant = self.chat_ids2assistants[chat_id]
 
         
@@ -232,11 +240,14 @@ Params:
 
             # Removing retrieval references
             bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
+            bot_message_cleaned = re.sub('【.*?†file】', '', bot_message)
+            bot_message_cleaned = re.sub('【.*?†json】', '', bot_message)
             bot_message_markdown_format = bot_message_cleaned.replace('**', '*').replace('#', '')
             await update.message.reply_text(bot_message_markdown_format, parse_mode=ParseMode.MARKDOWN)
 
     async def handle_audio(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         chat_id = update.message.chat_id
+        await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
         # audio_file = await update.message.voice.get_file() if update.message.voice else await update.message.audio.get_file()
         # my_audio_file = tempfile.NamedTemporaryFile(delete=False, suffix='.oga')
         # with open(my_audio_file.name, 'wb') as f:
