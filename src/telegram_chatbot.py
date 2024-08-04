@@ -13,7 +13,7 @@ from telegram.ext import ContextTypes
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bookingcom import scrape_hotel
 from rag import RAGAssistant, create_vector_store, RAGParams
-from prompts import prompt_persona1, prompt_persona2,  prompt_persona3
+from prompts import promptsPersona
 from pydub import AudioSegment
 
 def is_valid_url(url: str) -> bool:
@@ -49,9 +49,9 @@ Params:
         self.telegram_app.add_handler(CommandHandler("start", self.start_command))
         self.telegram_app.add_handler(CommandHandler("help", self.help_command))
         self.telegram_app.add_handler(CommandHandler("hotel", self.hotel_command))
-        self.telegram_app.add_handler(CommandHandler("Marcos", self.persona1_command))
-        self.telegram_app.add_handler(CommandHandler("Ana", self.persona2_command))
-        self.telegram_app.add_handler(CommandHandler("Lucas", self.persona3_command))
+        self.telegram_app.add_handler(CommandHandler("Marcos", self.create_persona_handler("Marcos")))
+        self.telegram_app.add_handler(CommandHandler("Ana", self.create_persona_handler("Ana")))
+        self.telegram_app.add_handler(CommandHandler("Lucas", self.create_persona_handler("Lucas")))
 
         self.telegram_app.add_handler(
             MessageHandler(filters.TEXT & ~filters.COMMAND, self.get_bot_answer)
@@ -102,37 +102,22 @@ Params:
             f"Você pode perguntar sobre o estabelecimento {self.rag_params.hotel_name} que eu saberei responder 😁." # pylint: disable=line-too-long
         )
 
-    async def persona1_command(
+    def create_persona_handler(self, persona):
+        async def wrapper(update: Update, context: ContextTypes.DEFAULT_TYPE):
+            await self.persona_command(persona, update, context)
+        return wrapper
+
+    async def persona_command(
         self,
+        persona,
         update: Update,
         context: ContextTypes.DEFAULT_TYPE # pylint: disable=unused-argument
     ) -> None:
-        await self.handle_assistant("persona1",prompt_persona1, update, context)
+        await self.handle_assistant(persona,promptsPersona[persona], update, context)
         await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
         await update.message.reply_text(
-            f"Olá! Sou Marcos, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
+            f"Olá! Sou {persona}, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
         )
-
-    async def persona2_command(
-        self,
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-    ) -> None:
-        await self.handle_assistant("persona2", prompt_persona1,update, context) 
-        await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        await update.message.reply_text(
-        f"Olá! Sou Ana, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
-    )
-    async def persona3_command(
-            self,
-        update: Update,
-        context: ContextTypes.DEFAULT_TYPE
-    ) -> None:
-        await self.handle_assistant("persona3", prompt_persona1,update, context) 
-        await context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        await update.message.reply_text(
-        f"Olá! Sou Lucas, atendente do {self.rag_params.hotel_name}. Estou à sua disposição, como eu poderia ajudar?😊"
-    )
 
     async def handle_assistant (
         self,
@@ -143,54 +128,43 @@ Params:
     ) -> None:
 
         chat_id = update.message.chat_id
-        if chat_id not in self.chat_ids2assistants:
-            if persona == "persona1":
-                self.rag_params.tools = [{'type':'file_search'}]
-                self.rag_params.prompt = prompt_persona1
-                self.chat_ids2assistants[chat_id] = RAGAssistant(
-                self.rag_params
-            )
-            elif  persona == 'persona2':
-                self.rag_params.tools = [{
-                    'type':'file_search'
-                        }, {
-                            "type": "function",
-                            "function": {
-                                "name": "get_tourist_points",
-                                "description": "Esta função recebe um endereço e retorna os pontos turisticos proximos, junto com informações sobre a cultura e historia da região .",
-                                "parameters": {
-                                    "type": "object",
-                                    "properties": {
-                                        "query": {"type": "string", "description": "The search query to use. For example: 'pontos turisticos proximos a pousada porto de galinhas'"},
-                                    },
-                                    "required": ["query"]
-                                }
-                            }
-                        }]
-                self.rag_params.prompt = prompt_persona2
-                self.chat_ids2assistants[chat_id] = RAGAssistant(
-                    self.rag_params
-            )
-            else:
-                self.rag_params.tools = [{'type':'file_search'},
-                        {
+        if persona == "Marcos":
+            self.rag_params.tools = [{'type':'file_search'}]
+        elif  persona == "Ana":
+            self.rag_params.tools = [{
+                'type':'file_search'
+                    }, {
                         "type": "function",
                         "function": {
-                            "name": "get_restaurants",
-                            "description": "Esta função recebe um endereço proximo e retorna os restaurantes e bares próximos.",
+                            "name": "get_tourist_points",
+                            "description": "Esta função recebe um endereço e retorna os pontos turisticos proximos, junto com informações sobre a cultura e historia da região .",
                             "parameters": {
                                 "type": "object",
                                 "properties": {
-                                    "query": {"type": "string", "description": "The search query to use. For example: 'bares e restaurantes proximos a pousada porto de galinhas'"},
+                                    "query": {"type": "string", "description": "The search query to use. For example: 'pontos turisticos proximos a pousada porto de galinhas'"},
                                 },
                                 "required": ["query"]
                             }
                         }
                     }]
-                self.rag_params.prompt = prompt_persona3
-                self.chat_ids2assistants[chat_id] = RAGAssistant(
-                    self.rag_params
-            )
+        else:
+            self.rag_params.tools = [{'type':'file_search'},
+                    {
+                    "type": "function",
+                    "function": {
+                        "name": "get_restaurants",
+                        "description": "Esta função recebe um endereço proximo e retorna os restaurantes e bares próximos.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "query": {"type": "string", "description": "The search query to use. For example: 'bares e restaurantes proximos a pousada porto de galinhas'"},
+                            },
+                            "required": ["query"]
+                        }
+                    }
+                }]
+        self.rag_params.prompt = promptsPersona[persona]
+        self.chat_ids2assistants[chat_id] = RAGAssistant(self.rag_params)
 
 
     async def hotel_command(
@@ -256,7 +230,6 @@ Params:
            
              rag_assistant.add_user_message(update.message.text)
              print('add')
-
              bot_message = str(rag_assistant.run_thread()["messages"][0])
              print('rodei a thread')
 
