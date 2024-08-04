@@ -204,7 +204,7 @@ Params:
 
         # Create a new assistant associated with the provided URL
         context.user_data['force_start'] = True
-        await self.start(update, context)
+        await self.start_command(update, context)
         self.chat_ids2assistants[chat_id] = RAGAssistant(
             self.rag_params
         )
