@@ -226,12 +226,9 @@ Params:
              await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
              rag_assistant = self.chat_ids2assistants[chat_id]
 
-             print('setei rag assistant')
            
              rag_assistant.add_user_message(update.message.text)
-             print('add')
              bot_message = str(rag_assistant.run_thread()["messages"][0])
-             print('rodei a thread')
 
             # Removing retrieval references
              bot_message_cleaned = re.sub('【.*?†source】', '', bot_message)
@@ -272,12 +269,10 @@ Params:
             update_id=update.update_id,
             message=message,
         )
-        print(context)
         # Em seguida, processa a transcrição como se fosse uma mensagem de texto normal
         await self.get_bot_answer(new_update, context)
 
     async def transcrever_audio(self, arquivo_audio):
         with open(arquivo_audio, "rb") as audio_file:
             transcript = openai.audio.transcriptions.create(model="whisper-1", file=audio_file, response_format="text")
-            print(transcript)
             return transcript.__str__()
