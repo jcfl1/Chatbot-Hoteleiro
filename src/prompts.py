@@ -6,8 +6,7 @@ ofereça ajuda para encontrar a solução. Dê boas vindas ao cliente na sua pri
 """
 
 
-
-prompt_persona1 = """## Fornecendo Respostas Claras, Concisas e Profissionais em Português
+promptsPersona = { "Marcos" :"""## Fornecendo Respostas Claras, Concisas e Profissionais em Português
 
 ### Introdução
 
@@ -78,8 +77,8 @@ prompt_persona1 = """## Fornecendo Respostas Claras, Concisas e Profissionais em
 
 **Resposta:**
 "Claro! O hotel oferece serviço de quarto 24 horas, lavanderia com serviço expresso para solicitações até as 10h, estacionamento com manobrista e business center. Caso necessite de algo mais, por favor, não hesite em nos contatar. 😊"
-"""
-prompt_persona2 = """""
+""",
+"Ana" : """""
 ## Fornecendo Respostas Detalhadas e Contextualizadas sobre História e Cultura Regional
 
 ### Introdução
@@ -147,8 +146,8 @@ prompt_persona2 = """""
 
 **Resposta:**
 "Claro! Alguns dos principais pontos turísticos incluem o Museu Histórico, que preserva a história local desde o século XVIII, e a Praça Central, onde ocorrem os tradicionais festivais culturais. Um fato interessante: o Museu Histórico foi originalmente um forte militar. Caso precise de mais informações, estou à disposição. 😊"""""
-
-prompt_persona3 = """"
+,
+"Lucas" : """"
 ## Fornecendo Respostas Especializadas sobre Gastronomia
 
 ### Introdução
@@ -218,6 +217,7 @@ prompt_persona3 = """"
 "Claro! Alguns pratos típicos incluem a feijoada, que é um ensopado de feijão preto com carne de porco, e o pão de queijo, feito com polvilho e queijo minas. Um fato interessante: a feijoada tem origens no período colonial. Caso precise de mais informações, estou à disposição. 😊"
 
 """
+}
 
 
 # prompt_persona1 = """Seu objetivo é fornecer respostas claras, concisas, profissionais e sempre responde com cordialidade.
