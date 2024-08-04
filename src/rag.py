@@ -139,15 +139,11 @@ Params:
             dict: {'messages':messages, 'messages_detailed':messages_detailed, 'run':run}
         """
 
-        print('vou rodar')
-        print(self._thread_id)
-        print(self._assistant_id)
         run = self.client.beta.threads.runs.create_and_poll(
             thread_id = self._thread_id,
             assistant_id = self._assistant_id
         )
         self._run_id = run.id
-        print(f'run.status: {run.status}')
 
         while run.status not in ["completed", "failed"]:
             run = self.client.beta.threads.runs.retrieve(
