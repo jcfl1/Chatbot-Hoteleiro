@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def create_parser():
     """salvando argumentos"""
     parser = argparse.ArgumentParser(description="Provide arguments for Chatbot Hoteleiro")
-    parser.add_argument('--model', default='gpt-3.5-turbo', type=str, help='Model')
+    parser.add_argument('--model', default='gpt-4o', type=str, help='Model')
     
     return parser
 
