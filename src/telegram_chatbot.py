@@ -137,7 +137,7 @@ Params:
                         "type": "function",
                         "function": {
                             "name": "get_tourist_points",
-                            "description": "Esta função recebe um endereço e retorna os pontos turisticos proximos, junto com informações sobre a cultura e historia da região .",
+                            "description": "Esta função recebe um endereço e retorna os pontos turisticos proximos, junto com informações sobre a cultura e historia da região. Não deve ser chamada para procurar nada além de pontos turisticos, como bares e restaurantes.",
                             "parameters": {
                                 "type": "object",
                                 "properties": {
@@ -153,7 +153,7 @@ Params:
                     "type": "function",
                     "function": {
                         "name": "get_restaurants",
-                        "description": "Esta função recebe um endereço proximo e retorna os restaurantes e bares próximos.",
+                        "description": "Esta função recebe um endereço proximo e retorna os restaurantes e bares próximos. Não deve ser chamada para procurar nada além de bares e restaurantes, como pontos turisticos e locais para passear",
                         "parameters": {
                             "type": "object",
                             "properties": {
