@@ -221,7 +221,9 @@ Params:
     ) -> None:
         """Answers the general user message."""
         chat_id = update.message.chat_id
-    
+        
+        await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
+
         if chat_id not in self.chat_ids2assistants:
             await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
             await update.message.reply_text("Por Favor, antes de começar, selecione seu assistente.")
