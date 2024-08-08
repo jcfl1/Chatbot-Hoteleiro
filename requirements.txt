@@ -10,3 +10,4 @@ jmespath==1.0.1
 parsel==1.9.1
 w3lib==2.2.1
 scrapfly-sdk==0.8.17
+tavily-python==0.3.5
